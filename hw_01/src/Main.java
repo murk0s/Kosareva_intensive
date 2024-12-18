@@ -13,12 +13,7 @@ public class Main {
         }
         print(arr);
 
-        arr.quickSort(new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                return (Integer) o2 - (Integer) o1;
-            }
-        });
+        arr.quickSort(Comparator.naturalOrder());
         System.out.println("sorted arr:");
         print(arr);
         arr.split(5);

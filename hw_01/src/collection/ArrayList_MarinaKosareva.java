@@ -1,7 +1,5 @@
 package collection;
 
-import util.Arrays_MarinaKosareva;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
@@ -129,7 +127,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
     @Override
     public void quickSort(Comparator comparator) {
         if (!isSorted) {
-            Arrays_MarinaKosareva.quickSort(elements, 0, size - 1, comparator);
+            quickSort(elements, 0, size - 1, comparator);
             isSorted = true;
         }
     }
@@ -195,5 +193,38 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
     private void rangeCheck(int index) {
         if (index >= size || index < 0)
             throw new IndexOutOfBoundsException();
+    }
+
+
+
+    private void quickSort(Object[] arr, int low, int high, Comparator comparator) {
+        if (low < high) {
+            int pi = partition(arr, low, high, comparator);
+
+            quickSort(arr, low, pi - 1, comparator);
+            quickSort(arr, pi + 1, high, comparator);
+        }
+    }
+
+    private int partition(Object[] arr, int low, int high, Comparator comparator) {
+        // Выбор среднего элемента в качестве опорного
+        int middle = low + (high - low) / 2;
+        Object pivot = arr[middle];
+        swap(arr, middle, high);
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (comparator.compare(arr[j], pivot) > 0) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+        swap(arr, i+1, high);
+        return i + 1;
+    }
+
+    private void swap(Object[] arr, int i, int j){
+        Object temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
 }
