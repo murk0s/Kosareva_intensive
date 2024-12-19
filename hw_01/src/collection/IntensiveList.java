@@ -10,7 +10,7 @@ public interface IntensiveList<E> {
     E set(int index, E element);
     E remove(int index);
     void clear();//удаляем все элементы, capacity приводим к дефолтному
-    void quickSort(Comparator<E> comparator);//реализуем быструю сортировку, дефолт по возрастанию
+    void quickSort(Comparator<? super E>  comparator);//реализуем быструю сортировку, дефолт по возрастанию
     boolean isSorted();
     void split(int size);//обрезаем список до указанного размера
 }

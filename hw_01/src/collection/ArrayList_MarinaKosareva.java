@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class ArrayList_MarinaKosareva <E> implements IntensiveList {
+public class ArrayList_MarinaKosareva <E> implements IntensiveList <E> {
     /**
      * Дефолтная ёмкость массива
      */
@@ -12,7 +12,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
     /**
      * Массив, в котором хранятся элементы листа ArrayList_MarinaKosareva
      */
-    private Object[] elements;
+    private E[] elements;
     /**
      * Размер листа ArrayList_MarinaKosareva (количество элементов, которые содержит лист)
      */
@@ -26,7 +26,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      */
     public ArrayList_MarinaKosareva() {
         isSorted = true;
-        this.elements = new Object[DEFAULT_CAPACITY];
+        this.elements = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     /**
@@ -43,7 +43,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @param element
      */
     @Override
-    public void add(Object element) {
+    public void add(E element) {
         if (size == elements.length)
             elements = grow();
         elements[size] = element;
@@ -58,7 +58,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @throws IndexOutOfBoundsException  – если индекс не в диапозоне листа (index < 0 || index > size())
      */
     @Override
-    public void add(int index, Object element) {
+    public void add(int index, E element) {
         rangeCheckForAdd(index);
         if (size == elements.length)
             elements = grow();
@@ -75,7 +75,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @throws IndexOutOfBoundsException  – если индекс не в диапозоне листа (index < 0 || index >= size())
      */
     @Override
-    public Object get(int index) {
+    public E get(int index) {
         rangeCheck(index);
         return elements[index];
     }
@@ -87,7 +87,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @return
      */
     @Override
-    public Object set(int index, Object element) {
+    public E set(int index, E element) {
         rangeCheck(index);
         elements[index] = element;
         return elements[index];
@@ -100,9 +100,9 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @throws IndexOutOfBoundsException – если индекс не в диапазоне листа (index < 0 || index >= size()
      */
     @Override
-    public Object remove(int index) {
-        Objects.checkIndex(index, size);
-        Object oldValue = elements[index];
+    public E remove(int index) {
+        rangeCheck(index);
+        E oldValue = elements[index];
 
         size--;
         if (size > index)
@@ -117,7 +117,8 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
     @Override
     public void clear() {
         size=0;
-        this.elements = new Object[DEFAULT_CAPACITY];
+        this.elements = (E[]) new Object[DEFAULT_CAPACITY];
+        isSorted = true;
     }
 
     /**
@@ -125,7 +126,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @param comparator
      */
     @Override
-    public void quickSort(Comparator comparator) {
+    public void quickSort(Comparator<? super E> comparator) {
         if (!isSorted) {
             quickSort(elements, 0, size - 1, comparator);
             isSorted = true;
@@ -138,7 +139,26 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      */
     @Override
     public boolean isSorted() {
-        return isSorted;
+        return isSorted ? true : checkSort();
+    }
+
+    /**
+     * Проверяет, отсортирован ли массив, если
+     * элементы имплементируют Compable,
+     * в случае успешной проверки устанавливает isSorted = true;
+     * @return
+     */
+
+    private boolean checkSort(){
+        if (size == 0) return true;
+
+        if (elements[0] instanceof Comparable) {
+            for (int i = 1; i < size; i++)
+                if (((Comparable<E>) elements[i - 1]).compareTo((E) elements[i]) > 0) return false;
+
+            return (isSorted = true);
+        }
+        else return false;
     }
 
     /**
@@ -160,13 +180,13 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * @param minCapacity - минимально необходимый размер массива
      * @return
      */
-    private Object[] grow(int minCapacity) {
+    private E[] grow(int minCapacity) {
         int oldCapacity = elements.length;
         if (oldCapacity > 0 ) {
             int newCapacity = (int) (minCapacity*1.5);
             return elements = Arrays.copyOf(elements, newCapacity);
         } else {
-            return elements = new Object[Math.max(DEFAULT_CAPACITY, minCapacity)];
+            return elements = (E[]) new Object[Math.max(DEFAULT_CAPACITY, minCapacity)];
         }
     }
 
@@ -174,7 +194,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
      * Изменяет ёмкость массива
      * @return
      */
-    private Object[] grow() {
+    private E[] grow() {
         return grow(size + 1);
     }
 
@@ -213,7 +233,7 @@ public class ArrayList_MarinaKosareva <E> implements IntensiveList {
         swap(arr, middle, high);
         int i = (low - 1);
         for (int j = low; j < high; j++) {
-            if (comparator.compare(arr[j], pivot) > 0) {
+            if (comparator.compare(arr[j], pivot) < 0) {
                 i++;
                 swap(arr, i, j);
             }
